@@ -1,122 +1,134 @@
-let nombre1;
+// Obtener el contenedor del formulario
+const formularioContainer = document.getElementById('formulario-container');
 
-function nombre() {
-    do {
-        nombre1 = prompt("Ingrese su nombre");
-    } while (!isNaN(nombre1) || nombre1.length > 10);
-    console.log("Bienvenido " + nombre1)
-}
-nombre();
+// Crear el formulario
+const formulario = document.createElement('form');
+formulario.id = 'miFormulario';
 
-let destinoDePrestamo1;
-let continuar = true;
+// Crear un campo de entrada de texto para el nombre de usuario
+const labelUsuario = document.createElement("label")
+labelUsuario.innerHTML = "Nombre"
+formulario.appendChild(labelUsuario);
+const inputUsuario = document.createElement('input');
+inputUsuario.type = "text"
+inputUsuario.id = "usuario"
+formulario.appendChild(inputUsuario);
 
-//Funcion para definir el destino del prestamo
+// Crear un campo de entrada para dinero solicitado
+const labelCantidadDeDinero = document.createElement("label")
+labelCantidadDeDinero.innerHTML = "Ingrese la cantidad de dinero"
+formulario.appendChild(labelCantidadDeDinero);
+const inputDinero = document.createElement('input');
+inputDinero.type = "number"
+inputDinero.id = "DineroSolicitado"
+formulario.appendChild(inputDinero);
 
-function destinoDePrestamo() {
-    while (continuar) {
-        destinoDePrestamo1 = prompt("Lo va a invertir en un vehiculo o propiedad?");
-        switch (destinoDePrestamo1) {
-            case "vehiculo":
-                console.log("lo va a invertir en un vehiculo");
-                continuar = false;
-                break;
-            case "propiedad":
-                console.log("lo va a invertir en una propiedad");
-                continuar = false;
-                break;
-        }
+// Crear un campo para la cantidad de cuotas a pagar
+const cantidadDeCuotas = document.createElement("label")
+cantidadDeCuotas.innerHTML = "Ingrese la cantidad de cuotas que quiere pagar"
+formulario.appendChild(cantidadDeCuotas);
+const inputCuotas = document.createElement('input');
+inputCuotas.type = "number"
+inputCuotas.id = "cuotasSolicitadas"
+formulario.appendChild(inputCuotas);
+
+// Crear un campo para obtener numero de celular del cliente
+const celularCliente = document.createElement("label")
+celularCliente.innerHTML = "Numero de celular"
+formulario.appendChild(celularCliente);
+const inputCelular = document.createElement('input');
+inputCelular.type = "number"
+inputCelular.id = "numeroDeCelular"
+formulario.appendChild(inputCelular);
+
+// Crear un campo para la ubicacion del cliente
+const ubicacionCliente = document.createElement("label")
+ubicacionCliente.innerHTML = "Provincia"
+formulario.appendChild(ubicacionCliente);
+const inputUbi = document.createElement('input');
+inputUbi.type = "text"
+inputUbi.id = "ubicacionCliente"
+formulario.appendChild(inputUbi);
+console.log(inputUbi)
+
+
+
+// Crear un botón de inicio de sesión
+const botonLogin = document.createElement('button');
+botonLogin.id = "botonDeEnviar"
+botonLogin.type = 'submit';
+botonLogin.textContent = 'Enviar';
+formulario.appendChild(botonLogin);
+
+// Agregar el formulario al contenedor
+formularioContainer.appendChild(formulario);
+
+// Crear el evento para el envío del formulario
+formulario.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+
+
+    // Obtener los valores de los campos de entrada
+    const nombreUsuario = inputUsuario.value;
+    const dineroSolicitado = parseFloat(inputDinero.value);
+    const cuotasSolicitadas = parseInt(inputCuotas.value);
+    const numeroDeCelular = inputCelular.value;
+    const ubicacionCliente = inputUbi.value.toLowerCase()
+
+    // Validar que los campos no estén vacíos
+    if (
+        nombreUsuario.trim() === '' ||
+        dineroSolicitado === '' ||
+        cuotasSolicitadas === '' ||
+        numeroDeCelular.trim() === '' ||
+        ubicacionCliente.trim() === ''
+    ) {
+        alert('Por favor, complete todos los campos antes de enviar el formulario.');
+        return;
     }
-}
-destinoDePrestamo();
+    //validar nombre de usuario
+    const regexNombreUsuario = /^[a-zA-Z]{1,19}$/;
+    if (!regexNombreUsuario.test(nombreUsuario)) {
+        alert('El nombre de usuario debe contener solo letras, menos de 20 caracteres y no dejar espacios.');
+        return;
+    }
 
-let cantidad1;
+    //Validar cantidad de dinero
+    if (dineroSolicitado <= 99999 || dineroSolicitado > 100000000) {
+        alert('La cantidad de dinero a prestar debe ser mayor a 100.000 y como máximo 100,000,000.');
+        return; // Detener el proceso si la cantidad de dinero no cumple con la validación
+    }
 
-//Funcion para prestamo y cuotas
+    //validar cantidad de cuotas
+    if (cuotasSolicitadas > 60 || cuotasSolicitadas < 3) {
+        alert('El número máximo de cuotas es 60 y el minimo de 3. Por favor, ingrese un valor válido.');
+        return;
+    }
 
-function prestamo() {
-    do {
-        cantidad1 = parseInt(prompt("ingresar la cantidad a prestar, lo minimo son $100.000"));
-    } while (isNaN(cantidad1) || cantidad1 == 0 || cantidad1 > 9999999 || cantidad1 < 0 || cantidad1 < 100000);
-    console.log("la cantidad a prestar es " + cantidad1);
-    return cantidad1;
-}
-prestamo();
-
-let cuotas1;
-
-function cuotas() {
-    do {
-        cuotas1 = parseInt(prompt("ingresar en cuantas cuotas lo quiere realizar de 12 a 60"));
-    } while (isNaN(cuotas1) || cuotas1 <= 11 || cuotas1 >= 61 || cuotas1 < 0);
-    console.log("el prestamo lo va a realizar en " + cuotas1 + " cuota/s");
-    return cuotas1;
-}
-
-cuotas();
-
-function dividir(dato1, dato2) {
-    let resultado = dato1 / dato2;
-    return resultado;
-}
-
-let division = dividir(cantidad1, cuotas1);
-
-console.log("Usted debe pagar " + cuotas1 + " cuotas de " + Math.round(division * 1.5));
-
-//Funcion para obtener el celular del cliente
-
-let celular;
+    if (numeroDeCelular.length > 12) {
+        alert('Numero ingresado no valido');
+        return; // Detener el proceso si el número de celular no tiene 12 dígitos
+    }
 
 
-function obtenerCelular() {
-    do {
-        celular = parseInt(prompt("Ingrese su numero de celular con su cod. de area(sin el 15)"));
-    } while (isNaN(celular) || celular > 99999999999 || celular == 0)
-    console.log("su numero de celular es " + celular)
-    return celular;
-}
-obtenerCelular();
+    //Se crea un arrays con las provincias y se valida la provincia
+    const provinciasDeArgentina = ["buenos aires", "catamarca", "chaco", "chubut", "cordoba", "Corrientes", "entre rios", "formosa", "jujuy", "la pampa", "la rioja", "mendoza", "misiones", "neuquen", "rio negro", "salta", "san juan", "san luis", "santa cruz", "santa fe", "santiago del estero", "tierra del fuego", "tucuman"];
 
-//Funcion para la ubicacion del cliente
+    if (!provinciasDeArgentina.includes(ubicacionCliente)) {
+        alert('La ubicación ingresada no es válida. Por favor, seleccione una provincia válida.');
+        return;
+    }
 
-function verificarStringEnArray(array, stringBuscado) {
-    return array.includes(stringBuscado);
-}
+    //Se asigna esos valores a un cliente (objeto)
+    const datosCliente = {
+        nombreUsuario: nombreUsuario,
+        dineroSolicitado: dineroSolicitado,
+        cuotasSolicitadas: cuotasSolicitadas,
+        numeroDeCelular: numeroDeCelular,
+        ubicacionCliente: ubicacionCliente,
+        dineroAPagar: dineroSolicitado / cuotasSolicitadas,
 
-const provinciasDeArgentina = ["buenos aires", "catamarca", "chaco", "chubut", "cordoba", "Corrientes", "entre rios", "formosa", "jujuy", "la pampa", "la rioja", "mendoza", "misiones", "neuquen", "rio negro", "salta", "san juan", "san luis", "santa cruz", "santa fe", "santiago del estero", "tierra del fuego", "tucuman"];
-let provincia;
-let resultado;
-
-function ubicacionCliente() {
-    do {
-        provincia = prompt("Ingrese de que provincia es usted");
-        resultado = verificarStringEnArray(provinciasDeArgentina, provincia);
-    } while (!isNaN(provincia) || resultado == false)
-    console.log("Usted es de " + provincia)
-}
-
-ubicacionCliente();
-
-
-//Horario en el que el cliente ha realizado la operacion
-const hoy = new Date
-console.log(hoy.toLocaleString())
-
-//Se crea al cliente como objeto
-const cliente = {
-    nombreDeCliente: nombre1,
-    dineroAPagar: cantidad1,
-    cantidadDeCuotas: cuotas1,
-    destinoDeDinero: destinoDePrestamo1,
-    celularDelCliente: celular,
-    provinciaDelCliente: provincia,
-}
-console.log(cliente)
-
-//Se pushea el cliente a un arrays
-const carteraDeClientes = [];
-carteraDeClientes.push(cliente)
-for (const cliente of carteraDeClientes) {
-    console.log(carteraDeClientes)
-}
+    };
+    console.log(datosCliente)
+});
