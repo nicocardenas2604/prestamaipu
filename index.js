@@ -1,11 +1,10 @@
 // Obtener el contenedor del formulario
 const formularioContainer = document.getElementById('formulario-container');
 
-// Crear el formulario
 const formulario = document.createElement('form');
 formulario.id = 'miFormulario';
 
-// Crear un campo de entrada de texto para el nombre de usuario
+// Inputs para el formulario
 const labelUsuario = document.createElement("label")
 labelUsuario.innerHTML = "Nombre"
 formulario.appendChild(labelUsuario);
@@ -14,7 +13,6 @@ inputUsuario.type = "text"
 inputUsuario.id = "usuario"
 formulario.appendChild(inputUsuario);
 
-// Crear un campo de entrada para dinero solicitado
 const labelCantidadDeDinero = document.createElement("label")
 labelCantidadDeDinero.innerHTML = "Ingrese la cantidad de dinero"
 formulario.appendChild(labelCantidadDeDinero);
@@ -23,7 +21,6 @@ inputDinero.type = "number"
 inputDinero.id = "DineroSolicitado"
 formulario.appendChild(inputDinero);
 
-// Crear un campo para la cantidad de cuotas a pagar
 const cantidadDeCuotas = document.createElement("label")
 cantidadDeCuotas.innerHTML = "Ingrese la cantidad de cuotas que quiere pagar"
 formulario.appendChild(cantidadDeCuotas);
@@ -32,7 +29,6 @@ inputCuotas.type = "number"
 inputCuotas.id = "cuotasSolicitadas"
 formulario.appendChild(inputCuotas);
 
-// Crear un campo para obtener numero de celular del cliente
 const celularCliente = document.createElement("label")
 celularCliente.innerHTML = "Numero de celular"
 formulario.appendChild(celularCliente);
@@ -41,7 +37,6 @@ inputCelular.type = "number"
 inputCelular.id = "numeroDeCelular"
 formulario.appendChild(inputCelular);
 
-// Crear un campo para la ubicacion del cliente
 const ubicacionCliente = document.createElement("label")
 ubicacionCliente.innerHTML = "Provincia"
 formulario.appendChild(ubicacionCliente);
@@ -49,29 +44,19 @@ const inputUbi = document.createElement('input');
 inputUbi.type = "text"
 inputUbi.id = "ubicacionCliente"
 formulario.appendChild(inputUbi);
-console.log(inputUbi)
 
-
-
-// Crear un botón
 const botonLogin = document.createElement('button');
 botonLogin.id = "botonDeEnviar"
 botonLogin.type = 'submit';
 botonLogin.textContent = 'Enviar';
 formulario.appendChild(botonLogin);
 
-// Agregar el formulario al contenedor
 formularioContainer.appendChild(formulario);
 
-
-// Crear el evento para el envío del formulario
+// Evento para el envío del formulario
 formulario.addEventListener('submit', function (event) {
     event.preventDefault();
 
-
-
-
-    // Obtener los valores de los campos de entrada
     const nombreUsuario = inputUsuario.value;
     const dineroSolicitado = parseFloat(inputDinero.value);
     const cuotasSolicitadas = parseInt(inputCuotas.value);
@@ -91,7 +76,7 @@ formulario.addEventListener('submit', function (event) {
         )
         return;
     }
-    //validar nombre de usuario
+    //validacion de datos
     const regexNombreUsuario = /^[a-zA-Z]{1,19}$/;
     if (!regexNombreUsuario.test(nombreUsuario)) {
         Swal.fire({
@@ -102,7 +87,6 @@ formulario.addEventListener('submit', function (event) {
         return;
     }
 
-    //Validar cantidad de dinero
     if (dineroSolicitado <= 99999 || dineroSolicitado > 100000000) {
         Swal.fire({
             icon: 'error',
@@ -112,7 +96,6 @@ formulario.addEventListener('submit', function (event) {
         return;
     }
 
-    //validar cantidad de cuotas
     if (cuotasSolicitadas > 60 || cuotasSolicitadas < 3) {
         Swal.fire({
             icon: 'error',
@@ -131,8 +114,6 @@ formulario.addEventListener('submit', function (event) {
         return;
     }
 
-
-    //Se crea un arrays con las provincias y se valida la provincia
     const provinciasDeArgentina = ["buenos aires", "catamarca", "chaco", "chubut", "cordoba", "Corrientes", "entre rios", "formosa", "jujuy", "la pampa", "la rioja", "mendoza", "misiones", "neuquen", "rio negro", "salta", "san juan", "san luis", "santa cruz", "santa fe", "santiago del estero", "tierra del fuego", "tucuman"];
 
     if (!provinciasDeArgentina.includes(ubicacionCliente)) {
@@ -144,11 +125,20 @@ formulario.addEventListener('submit', function (event) {
         return;
     }
 
-
-    // Deshabilitar el botón después de enviar el formulario
+    // Desactiva boton enviar,limpia inputs y mensaje de registro exitoso
     botonLogin.disabled = true;
+    inputUsuario.value = '';
+    inputDinero.value = '';
+    inputCuotas.value = '';
+    inputCelular.value = '';
+    inputUbi.value = '';
+    Swal.fire({
+        icon: 'success',
+        title: 'Registro exitoso',
+        text: '¡El registro se ha completado con éxito!',
+    });
 
-    //Se asigna esos valores a un cliente (objeto)
+    //Se asigna esos valores a un cliente ,se manda a storage y se crea saludo
     const datosCliente = {
         nombreUsuario: nombreUsuario,
         dineroSolicitado: dineroSolicitado,
@@ -156,10 +146,7 @@ formulario.addEventListener('submit', function (event) {
         numeroDeCelular: numeroDeCelular,
         ubicacionCliente: ubicacionCliente,
         dineroAPagar: dineroSolicitado * 1.75,
-
     };
-
-    // Se envia el cliente al storage y se crea un saludo
 
     localStorage.setItem("nuevoCliente", JSON.stringify(datosCliente))
     const nCliente = localStorage.getItem("nuevoCliente")
@@ -170,33 +157,50 @@ formulario.addEventListener('submit', function (event) {
 
     formularioContainer.appendChild(saludoCliente)
 
-
     //tabla de cuotas
-    const tablaCuotas = document.createElement('table');
-    tablaCuotas.classList.add('table', 'table-striped');
-    tablaCuotas.innerHTML = `
+    setTimeout(function () {
+        const tablaCuotas = document.createElement('table');
+        tablaCuotas.classList.add('table', 'table-striped');
+        tablaCuotas.innerHTML = `
     <thead class="thead-dark">
         <tr>
             <th>Número de Cuota</th>
             <th>Valor de Cuota</th>
+            <th>Fecha de Pago</th>
+
         </tr>
     </thead>
     <tbody>
     </tbody>
 `;
-    formularioContainer.appendChild(tablaCuotas);
+        formularioContainer.appendChild(tablaCuotas);
 
-    const cuerpoTabla = tablaCuotas.querySelector('tbody');
+        const cuerpoTabla = tablaCuotas.querySelector('tbody');
 
-    // Calcular y mostrar las cuotas
-    for (let i = 1; i <= cuotasSolicitadas; i++) {
-        const valorCuota = (dineroSolicitado / cuotasSolicitadas) * 1.75;
-        const fila = `
+        // Calcular las fechas de pago
+        const fechaInicio = new Date();
+        const fechasDePago = [];
+
+        for (let i = 1; i <= cuotasSolicitadas; i++) {
+            const fechaCuota = new Date(fechaInicio);
+            fechaCuota.setDate(10);
+            fechaCuota.setMonth(fechaCuota.getMonth() + i);
+            fechasDePago.push(fechaCuota);
+        }
+
+        for (let i = 0; i < cuotasSolicitadas; i++) {
+            const valorCuota = (dineroSolicitado / cuotasSolicitadas) * 1.75;
+            const fechaPago = fechasDePago[i].toLocaleDateString();
+
+            const fila = `
         <tr>
-            <td>${i}</td>
+            <td>${i + 1}</td>
             <td>${valorCuota.toFixed(2)}</td>
+            <td>${fechaPago}</td>
         </tr>
-    `;
-        cuerpoTabla.innerHTML += fila;
-    }
+        `;
+
+            cuerpoTabla.innerHTML += fila;
+        }
+    }, 3000);
 });
